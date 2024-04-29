@@ -9,7 +9,7 @@ class GM_control
 {
 public:
 	explicit GM_control();
-	void findFragmentById(std::string);
+	GMF* findFragmentById(std::string);
 private:
 	std::vector<GMF*> fragments;
 };
