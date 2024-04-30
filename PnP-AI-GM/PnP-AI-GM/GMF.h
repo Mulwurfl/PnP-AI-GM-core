@@ -7,7 +7,9 @@ class GMF
 {
 public:
 	GMF();
-	std::string getId();
+	std::string getId() { return id;};
+	std::queue<std::string>* getBuffer() { return &in_buffer; };
+	void setOutBuffer(std::queue<std::string>* b) { out_buffer = b; };
 protected:
 	virtual void process();
 	std::string id;
