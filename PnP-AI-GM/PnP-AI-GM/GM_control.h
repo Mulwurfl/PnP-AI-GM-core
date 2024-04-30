@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GM_CONTROL_H
+#define GM_CONTROL_H
 #include <vector>
 #include <string>
 #include "GMF.h"
@@ -15,8 +16,8 @@ public:
 	std::queue<std::string>* getInBuffer();
 	std::queue<std::string>* getOutBuffer();
 private:
-	std::vector<GMF*> fragments;
+	std::vector<GMF*> fragments = std::vector<GMF*>();
 	std::queue<std::string>* in_buffer;
 	std::queue<std::string> out_buffer;
 };
-
+#endif

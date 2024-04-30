@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GMF_H
+#define GMF_H
 #include <queue>
 #include <string>
 
@@ -18,4 +19,4 @@ protected:
 	std::string in_id;
 	std::string out_id;
 };
-
+#endif

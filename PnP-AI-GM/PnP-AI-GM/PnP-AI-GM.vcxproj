@@ -150,6 +150,7 @@
     <ClCompile Include="GMF_1.cpp" />
     <ClCompile Include="GMF_2.cpp" />
     <ClCompile Include="GM_control.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

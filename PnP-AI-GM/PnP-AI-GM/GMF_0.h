@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GMF_0_H
+#define GMF_0_H
 #include "GMF.h"
 #include <string>
 class GMF_0 :
@@ -10,4 +11,4 @@ private:
     void process();
 
 };
-
+#endif
