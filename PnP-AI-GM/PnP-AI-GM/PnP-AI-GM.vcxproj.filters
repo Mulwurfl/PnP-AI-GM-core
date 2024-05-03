@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GMF.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GMF_0.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -28,6 +25,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GM_control.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GMF.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -45,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GMF.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

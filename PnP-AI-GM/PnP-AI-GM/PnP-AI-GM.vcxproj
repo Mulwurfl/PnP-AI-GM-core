@@ -146,6 +146,7 @@
     <ClInclude Include="GM_control.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GMF.cpp" />
     <ClCompile Include="GMF_0.cpp" />
     <ClCompile Include="GMF_1.cpp" />
     <ClCompile Include="GMF_2.cpp" />

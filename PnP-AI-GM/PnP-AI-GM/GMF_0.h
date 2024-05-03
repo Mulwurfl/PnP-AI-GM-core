@@ -8,7 +8,7 @@ class GMF_0 :
 public:
     explicit GMF_0(std::string);
 private:
-    void process();
+    void process() override;
 
 };
 #endif

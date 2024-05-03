@@ -3,6 +3,10 @@
 
 GM_control::GM_control()
 {
+	fragments = std::vector<GMF*>();
+	in_buffer = NULL;
+	out_buffer = std::queue<std::string>();
+
 	fragments.push_back(new GMF_0("0"));
 	fragments.push_back(new GMF_1("1"));
 	fragments.push_back(new GMF_0("2"));
