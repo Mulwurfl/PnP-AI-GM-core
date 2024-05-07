@@ -7,4 +7,5 @@ GMF_1::GMF_1(std::string newId)
 
 void GMF_1::process()
 {
+
 }

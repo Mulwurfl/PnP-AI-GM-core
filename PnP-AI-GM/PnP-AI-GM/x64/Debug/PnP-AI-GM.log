@@ -1,26 +1,8 @@
-﻿  GMF_0.cpp
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF_0.cpp(4): error C2280: 'GMF::GMF(void)': attempting to reference a deleted function
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF.h(17): message : compiler has generated 'GMF::GMF' here
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF.h(17,1): message : 'GMF::GMF(void)': function was implicitly deleted because 'GMF' has an uninitialized data member 'GMF::out_id' of reference type
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF.h(16): message : see declaration of 'GMF::out_id'
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF_0.cpp(5,2): error C2248: 'GMF::id': cannot access private member declared in class 'GMF'
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF.h(12): message : see declaration of 'GMF::id'
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF.h(6): message : see declaration of 'GMF'
+﻿  GMF.cpp
+  GMF_0.cpp
   GMF_1.cpp
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF_1.cpp(4): error C2280: 'GMF::GMF(void)': attempting to reference a deleted function
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF.h(17): message : compiler has generated 'GMF::GMF' here
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF.h(17,1): message : 'GMF::GMF(void)': function was implicitly deleted because 'GMF' has an uninitialized data member 'GMF::out_id' of reference type
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF.h(16): message : see declaration of 'GMF::out_id'
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF_1.cpp(5,2): error C2248: 'GMF::id': cannot access private member declared in class 'GMF'
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF.h(12): message : see declaration of 'GMF::id'
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF.h(6): message : see declaration of 'GMF'
   GMF_2.cpp
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF_2.cpp(4): error C2280: 'GMF::GMF(void)': attempting to reference a deleted function
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF.h(17): message : compiler has generated 'GMF::GMF' here
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF.h(17,1): message : 'GMF::GMF(void)': function was implicitly deleted because 'GMF' has an uninitialized data member 'GMF::out_id' of reference type
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF.h(16): message : see declaration of 'GMF::out_id'
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF_2.cpp(5,2): error C2248: 'GMF::id': cannot access private member declared in class 'GMF'
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF.h(12): message : see declaration of 'GMF::id'
-D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\GMF.h(6): message : see declaration of 'GMF'
   GM_control.cpp
+  main.cpp
   Generating Code...
+  PnP-AI-GM.vcxproj -> D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\x64\Debug\PnP-AI-GM.exe

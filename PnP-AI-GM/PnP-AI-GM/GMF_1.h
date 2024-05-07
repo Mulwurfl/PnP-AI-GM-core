@@ -7,6 +7,7 @@ class GMF_1 :
 {
 public:
     explicit GMF_1(std::string);
+    ~GMF_1() override = default;
 private:
     void process() override;
 
