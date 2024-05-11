@@ -13,11 +13,11 @@ public:
 	GMF* findFragmentById(std::string);
 	void start();
 	void buildPipeline();
-	std::queue<std::string>* getInBuffer();
-	std::queue<std::string>* getOutBuffer();
+	boost::lockfree::queue<std::string*>* getInBuffer();
+	boost::lockfree::queue<std::string*>* getOutBuffer();
 private:
 	std::vector<GMF*> fragments;
-	std::queue<std::string>* in_buffer;
-	std::queue<std::string> out_buffer;
+	boost::lockfree::queue<std::string*>* in_buffer;
+	boost::lockfree::queue<std::string*> out_buffer{ 100 };
 };
 #endif
