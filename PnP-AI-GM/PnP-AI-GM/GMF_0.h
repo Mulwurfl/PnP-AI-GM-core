@@ -2,6 +2,7 @@
 #define GMF_0_H
 #include "GMF.h"
 #include <string>
+#include <Python.h>
 class GMF_0 :
     public GMF
 {
@@ -10,6 +11,11 @@ public:
     ~GMF_0() override = default;
 private:
     void process() override;
-
+    PyObject* name;
+    PyObject* load_module;
+    PyObject* func;
+    PyObject* callfunc;
+    PyObject* args;
+    std::string py_process(std::string);
 };
 #endif
