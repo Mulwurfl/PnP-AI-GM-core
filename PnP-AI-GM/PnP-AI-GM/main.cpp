@@ -14,7 +14,6 @@ int main()
 	boost::chrono::high_resolution_clock::time_point t1;
 	boost::chrono::high_resolution_clock::time_point t2;
 	boost::chrono::microseconds total_t;
-	control.getInBuffer()->push(pstrin);
 
 	while (true) {
 		if (!control.getOutBuffer()->empty()) processing = 0; // Checks whether system has finished processing inputs
@@ -24,6 +23,7 @@ int main()
 				t1 = boost::chrono::high_resolution_clock::now();
 				std::cout << "Ready for input!\n";
 				std::cin >> strin;
+				control.getInBuffer()->push(pstrin);
 				processing = 1;
 				input = 0;
 			}
