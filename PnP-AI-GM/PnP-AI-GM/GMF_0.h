@@ -1,8 +1,8 @@
 #ifndef GMF_0_H
 #define GMF_0_H
 #include "GMF.h"
-#include <string>
 #include <Python.h>
+#include <string>
 class GMF_0 :
     public GMF
 {
