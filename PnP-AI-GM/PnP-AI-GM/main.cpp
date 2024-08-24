@@ -14,6 +14,31 @@ int main()
 	boost::chrono::high_resolution_clock::time_point t1;
 	boost::chrono::high_resolution_clock::time_point t2;
 	boost::chrono::microseconds total_t;
+	std::string thread_id;
+	std::cout << "Please enter thread ID. Leave empty for new game:\n";
+	//std::cin >> thread_id;
+	std::cout << "\n";
+	bool thread_initiated = false;
+	
+	/*
+	while (!thread_initiated) {
+		if (thread_id == "") {
+			// control.new_thread();
+		}
+		else {
+			// if (control.thread_exists()) {
+			//	control.load_thread();
+			//	thread_initiated = true;
+			// }
+			// else {
+			//	std::cout << "Invalid thread id. Please try again or leave field empty to start a new adventure:\n";
+			//	std::cin >> thread_id;
+			//	std::cout << "\n";
+		}
+	}*/
+	
+	
+
 
 	while (true) {
 		if (!control.getOutBuffer()->empty()) processing = 0; // Checks whether system has finished processing inputs

@@ -9,7 +9,7 @@ GM_control::GM_control()
 
 	fragments.push_back(new GMF_0("0"));
 	fragments.push_back(new GMF_1("1"));
-	fragments.push_back(new GMF_0("2"));
+	fragments.push_back(new GMF_2("2"));
 }
 
 boost::lockfree::queue<std::string*>* GM_control::getInBuffer()
@@ -20,6 +20,11 @@ boost::lockfree::queue<std::string*>* GM_control::getInBuffer()
 boost::lockfree::queue<std::string*>* GM_control::getOutBuffer()
 {
 	return &out_buffer;
+}
+
+std::string GM_control::getThread_Id()
+{
+	return session->getChatThreadID();
 }
 
 GMF* GM_control::findFragmentById(std::string id)

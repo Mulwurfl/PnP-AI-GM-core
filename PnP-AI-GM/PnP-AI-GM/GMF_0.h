@@ -9,6 +9,7 @@ class GMF_0 :
 public:
     explicit GMF_0(std::string);
     ~GMF_0() override = default;
+    
 private:
     void process() override;
     PyObject* name;
@@ -16,6 +17,8 @@ private:
     PyObject* func;
     PyObject* callfunc;
     PyObject* args;
-    std::string py_process(std::string);
+    std::string py_process(std::string, int);
+    std::string process_commmand(std::string);
+    std::string session_id;
 };
 #endif
