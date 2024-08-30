@@ -2,6 +2,7 @@
 #define GMF_H
 #include <queue>
 #include <string>
+#include <iostream>
 #include <boost/thread.hpp>
 #include <boost/lockfree/queue.hpp>
 #include <boost/chrono.hpp>

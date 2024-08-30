@@ -49,7 +49,13 @@ def run_with_fs(x,y):
 
 def create_thread():
     new_thread = client.beta.threads.create()
-    return new_thread
+    return new_thread.id
 
+def get_run(x,y):
+    run = client.beta.threads.runs.retrieve(
+        thread_id=x,
+        run_id=y
+    )
+    return run.data
 
 

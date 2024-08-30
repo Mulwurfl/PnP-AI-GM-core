@@ -2,6 +2,7 @@
 #define GM_CONTROL_H
 #include <vector>
 #include <string>
+#include <iostream>
 #include "GMF.h"
 #include "GMF_0.h"
 #include "GMF_1.h"
@@ -16,7 +17,11 @@ public:
 	void buildPipeline();
 	boost::lockfree::queue<std::string*>* getInBuffer();
 	boost::lockfree::queue<std::string*>* getOutBuffer();
-	std::string getThread_Id();
+	std::string getThread_ID();
+	void setThread_ID(std::string);
+	std::string getChatHistory();
+	void updateChatHistory(std::string);
+	std::string addToChatHistory(std::string);
 private:
 	std::vector<GMF*> fragments;
 	boost::lockfree::queue<std::string*>* in_buffer;

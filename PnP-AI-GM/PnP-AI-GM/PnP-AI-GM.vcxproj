@@ -119,6 +119,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files\boost\boost_1_82_0;C:\Users\nemch\AppData\Local\Programs\Python\Python39\include</AdditionalIncludeDirectories>
+      <AdditionalOptions>/uft-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,6 +148,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ChatMessage.h" />
+    <ClInclude Include="Game_session.h" />
     <ClInclude Include="GMF.h" />
     <ClInclude Include="GMF_0.h" />
     <ClInclude Include="GMF_1.h" />
@@ -154,6 +157,8 @@
     <ClInclude Include="GM_control.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ChatMessage.cpp" />
+    <ClCompile Include="Game_session.cpp" />
     <ClCompile Include="GMF.cpp" />
     <ClCompile Include="GMF_0.cpp" />
     <ClCompile Include="GMF_1.cpp" />

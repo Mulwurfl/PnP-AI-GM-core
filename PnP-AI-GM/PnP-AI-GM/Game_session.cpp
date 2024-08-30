@@ -26,3 +26,18 @@ void Game_session::addHiddenMessages(std::vector<std::string> newMessages)
 		hidden_messages.push_back(message);
 	}
 }
+
+std::forward_list<ChatMessage*> Game_session::getChatHistory()
+{
+	return chat_history;
+}
+
+void Game_session::updateChatHistory(std::forward_list<ChatMessage*> newHistory)
+{
+	chat_history = newHistory;
+}
+
+void Game_session::addToChatHistory(ChatMessage* message)
+{
+	chat_history.push_front(message);
+}

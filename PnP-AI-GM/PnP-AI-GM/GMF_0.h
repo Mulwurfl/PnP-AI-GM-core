@@ -3,6 +3,7 @@
 #include "GMF.h"
 #include <Python.h>
 #include <string>
+#include <vector>
 class GMF_0 :
     public GMF
 {
@@ -17,8 +18,9 @@ private:
     PyObject* func;
     PyObject* callfunc;
     PyObject* args;
-    std::string py_process(std::string, int);
+    std::string py_process(std::string, int, int = 0);
     std::string process_commmand(std::string);
     std::string session_id;
+    std::vector<std::string> hidden_messages;
 };
 #endif

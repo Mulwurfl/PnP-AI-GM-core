@@ -8,7 +8,8 @@ int main()
 
 	std::string strin;
 	std::string* pstrin = &strin;
-	std::string* pstrout;
+	std::string empty_string = "";
+	std::string* pstrout = &empty_string;
 	bool processing = false; // Currently waiting for request to be processed? = 1
 	bool input = true; // 1 = input mode; 0 = output mode
 	boost::chrono::high_resolution_clock::time_point t1;
@@ -47,7 +48,9 @@ int main()
 			if (input) { // If input == 1
 				t1 = boost::chrono::high_resolution_clock::now();
 				std::cout << "Ready for input!\n";
-				std::cin >> strin;
+				std::getline(std::cin, strin);
+				std::cout << "strin value is: " << strin << "\n";
+				std::cout << "pstrin value is: " << *pstrin << "\n";
 				control.getInBuffer()->push(pstrin);
 				processing = 1;
 				input = 0;
@@ -55,13 +58,61 @@ int main()
 			else {
 				t2 = boost::chrono::high_resolution_clock::now();
 				control.getOutBuffer()->pop(pstrout);
-				std::cout << *pstrout;
 
-				total_t = (boost::chrono::duration_cast<boost::chrono::milliseconds>(t2 - t1));
-				std::cout << "\nExecution time: " << total_t << "\n";
-				input = 1;
+				// sort output commands
+				if (pstrout->find("#!#!#!") != std::string::npos)
+				{
+					std::cout << "command response received: " << *pstrout << "\n";
+
+					if (pstrout->find("#!#!#! thread_id") != std::string::npos)
+					{
+						std::cout << "command response thread_id\n";
+						if (pstrout->find("#!#!#! thread_id error") != std::string::npos)
+						{
+							std::cout << "command response thread_id error\n";
+							*pstrout = pstrout->substr(7);
+							std::cout << *pstrout << "\n";
+						}
+						else if (pstrout->find("#!#!#! thread_id id") != std::string::npos)
+						{
+							std::cout << "command response thread_id id\n";
+							control.setThread_ID(pstrout->substr(21));
+							std::cout << "Now using chat thread: " << control.getThread_ID() << "\n";
+						}
+					}
+					else if (pstrout->find("#!#!#! process") != std::string::npos)
+					{
+						if (pstrout->find("#!#!#! process error") != std::string::npos)
+						{
+							*pstrout = pstrout->substr(7);
+							std::cout << *pstrout << "\n";
+						}
+						else if (pstrout->find("#!#!#! process answer") != std::string::npos)
+						{
+							*pstrout = control.addToChatHistory(pstrout->substr(23));
+							std::cout << *pstrout << "\n";
+							total_t = (boost::chrono::duration_cast<boost::chrono::milliseconds>(t2 - t1));
+							std::cout << "\nExecution time: " << total_t << "\n";
+							input = 1;
+						}
+					}
+					else if (pstrout->find("#!#!#! message_list") != std::string::npos)
+					{
+						if (pstrout->find("#!#!#! message_list error") != std::string::npos)
+						{
+							*pstrout = pstrout->substr(7);
+							std::cout << *pstrout << "\n";
+						}
+						else if (pstrout->find("#!#!#! message_list total") != std::string::npos)
+						{
+							control.updateChatHistory(pstrout->substr(26));
+						}
+					}
+				}
 			}
-			
 		}
+		pstrout = &empty_string;
 	}
 }
+
+

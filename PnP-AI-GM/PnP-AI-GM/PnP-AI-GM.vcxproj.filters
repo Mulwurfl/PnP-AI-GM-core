@@ -30,6 +30,12 @@
     <ClInclude Include="GMF.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Game_session.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChatMessage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GMF_0.cpp">
@@ -48,6 +54,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GMF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_session.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatMessage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

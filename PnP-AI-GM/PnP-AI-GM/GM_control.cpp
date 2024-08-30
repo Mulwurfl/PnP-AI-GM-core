@@ -22,9 +22,58 @@ boost::lockfree::queue<std::string*>* GM_control::getOutBuffer()
 	return &out_buffer;
 }
 
-std::string GM_control::getThread_Id()
+std::string GM_control::getThread_ID()
 {
 	return session->getChatThreadID();
+}
+
+void GM_control::setThread_ID(std::string id)
+{
+	session->setChatThreadID(id);
+}
+
+std::string GM_control::getChatHistory()
+{
+	return std::string();
+}
+
+void GM_control::updateChatHistory(std::string messages)
+{
+	std::forward_list<ChatMessage*> chat;
+	std::string str_tmp = "";
+	std::string p1, p2, p3;
+	int int_tmp = 0;
+	int c = std::stoi(messages.substr(0, messages.find("):")));
+
+	// "7):  #!#!#94:{message 1}:{user}:{id_1} #!#!#95:{message 2}:{assistant}:{id_2} ..... #!#!#100:{message 7}:{user}:{id_7}"
+	for (int i = 0; i < c; i++)
+	{
+		int_tmp = messages.find(":{") + 2;
+		p1 = messages.substr(int_tmp, messages.find("}:{", int_tmp) - int_tmp);
+		int_tmp = messages.find("}:{", int_tmp) + 3;
+		p2 = messages.substr(int_tmp, messages.find("}:{", int_tmp) - int_tmp);
+		int_tmp = messages.find("}:{", int_tmp) + 3;
+		p3 = messages.substr(int_tmp, messages.find("}") - int_tmp);
+
+		chat.push_front(new ChatMessage(p1, p2, p3));
+	}
+
+	session->updateChatHistory(chat);
+}
+
+std::string GM_control::addToChatHistory(std::string newMessage)
+{
+	// :{message 1}:{user}:{id_1}
+	std::string p1, p2, p3;
+	int i = newMessage.find("}:{");
+	p1 = newMessage.substr(2, i - 2);
+	i += 3;
+	p2 = newMessage.substr(i, newMessage.find("}:{", i) - i);
+	i = newMessage.find("}:{", i) + 3;
+	p3 = newMessage.substr(i, newMessage.find("}") - i);
+	session->addToChatHistory(new ChatMessage(p1, p2, p3));
+	
+	return p1;
 }
 
 GMF* GM_control::findFragmentById(std::string id)
