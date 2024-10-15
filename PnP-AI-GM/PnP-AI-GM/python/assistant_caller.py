@@ -1,12 +1,13 @@
 import os
+import json
 from openai import OpenAI
 client = OpenAI(
     api_key=os.environ.get("OPENAI_API_KEY"),
 )
   
-ASSISTANT_ID = "asst_AucaMbkzXpymTiGJZyXUWXsx"
+ASSISTANT_ID = "asst_pJZCD4IOf0rlXmhVBT5R0VDL"
 THREAD_ID = ""
-MODEL_ID = "gpt-4o-2024-05-13"
+MODEL_ID = "gpt-4o"
 
 def test(x,y):
     THREAD_ID = x
@@ -24,9 +25,28 @@ def get_msg_list(x,y):
     thread_messages = client.beta.threads.messages.list(
         thread_id=x,
         limit=y,
-        order=desc
+        order="desc"
     )
-    return thread_messages.data
+
+    simplified_messages = []
+    for message in thread_messages.data:
+        message_id = message.id
+        role = message.role
+        # Navigate through the nested structure to get the 'value'
+        if message.content and message.content[0].type == "text":
+            value = message.content[0].text.value
+        else:
+            value = ""  # or some default value or handling
+
+        # Repackage into a simpler dictionary
+        simplified_message = {
+            "id": message_id,
+            "role": role,
+            "value": value
+        }
+        simplified_messages.append(simplified_message)
+
+    return json.dumps(simplified_messages)
 
 def run(x,y):
     run = client.beta.threads.runs.create(
@@ -35,7 +55,7 @@ def run(x,y):
         model=MODEL_ID,
         additional_instructions=y
     )
-    return 1
+    return run.id
 
 def run_with_fs(x,y):
     run = client.beta.threads.runs.create(
@@ -45,17 +65,21 @@ def run_with_fs(x,y):
         tools=[{"type": "file_search"}],
         additional_instructions=y
     )
-    return 1
+    return run.id
 
 def create_thread():
     new_thread = client.beta.threads.create()
     return new_thread.id
+
+def retrieve_thread(x):
+    my_thread = client.beta.threads.retrieve(x)
+    return my_thread.id
 
 def get_run(x,y):
     run = client.beta.threads.runs.retrieve(
         thread_id=x,
         run_id=y
     )
-    return run.data
+    return run.status
 
 

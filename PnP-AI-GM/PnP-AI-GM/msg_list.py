@@ -4,5 +4,9 @@ client = OpenAI(
     api_key=os.environ.get("OPENAI_API_KEY"),
 )
 
-thread_messages = client.beta.threads.messages.list("thread_97CIE4JAVwqc9vhqDNgJwNJd")
-print(thread_messages.data)
+thread_message = client.beta.threads.messages.create(
+  "thread_test123",
+  role="user",
+  content="How does AI work? Explain it in simple terms.",
+)
+print(thread_message)

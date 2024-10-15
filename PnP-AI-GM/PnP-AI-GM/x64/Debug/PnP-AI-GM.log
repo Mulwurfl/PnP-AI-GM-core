@@ -1,2 +1,5 @@
-﻿  main.cpp
+﻿cl : command line warning D9002: ignoring unknown option '/uft-8'
+  main.cpp
   PnP-AI-GM.vcxproj -> D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\x64\Debug\PnP-AI-GM.exe
+  D:\Documents\GitHub\PnP-AI-GM-core\PnP-AI-GM\PnP-AI-GM\python\assistant_caller.py
+          1 file(s) copied.

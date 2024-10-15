@@ -1,6 +1,11 @@
 #include "GMF_0.h"
 #include <Python.h>
 #include <thread>
+#include <exception>
+#include <json.hpp>
+
+// for convenience
+using json = nlohmann::json;
 
 GMF_0::GMF_0(std::string newId)
 {
@@ -23,17 +28,17 @@ void GMF_0::process()
 	while (1) {
 		while (!in_buffer.empty())
 		{
-			std::cout << "process passing GMF_0\n";
+			//std::cout << "process passing GMF_0\n";
 			in_buffer.pop(temp);
-			std::cout << "message reads: " << *temp << "\n";
+			//std::cout << "message reads: " << *temp << "\n";
 			if (temp->find("#!#!#!") != std::string::npos)
 			{
-				std::cout << "command detected\n";
+				//std::cout << "command detected\n";
 				*temp = process_commmand(*temp);
 			}
 			else 
 			{
-				std::cout << "no command detected\n";
+				//std::cout << "no command detected\n";
 				*temp = py_process(*temp, 0, 1);
 			}
 			out_buffer->push(temp);
@@ -43,6 +48,7 @@ void GMF_0::process()
 
 std::string GMF_0::py_process(std::string message, int mode, int additional_arg)
 {
+	new_milestone = false;
 	std::string return_str = "";
 	std::string str_tmp = "";
 	int int_tmp = additional_arg; // range between 1 and 100; pass 0 when unused paramm
@@ -56,8 +62,26 @@ std::string GMF_0::py_process(std::string message, int mode, int additional_arg)
 		// Python calls break when using umlauts. Prolly need to cast message to UTF-8 first, but I'm not sure. May be a pure Win10 Problem.
 		args = PyTuple_Pack(2, PyUnicode_FromString((char*)session_id.c_str()), PyUnicode_FromString((char*)message.c_str()));
 		callfunc = PyObject_CallObject(func, args);
-		return_str = _PyUnicode_AsString(callfunc);
+		try
+		{
+			if (!callfunc)
+			{
+				if (PyErr_Occurred()) {
+					PyErr_Print();  // Print the Python error to stderr
+				}
+				throw std::runtime_error("Python function call failed.");
+			}
+
+			return_str = _PyUnicode_AsString(callfunc);
+			if (return_str == "") throw std::runtime_error("Failed to convert PyObject to string.");
+		}
+		catch (const std::exception& e)
+		{
+			std::cerr << "Exception caught: " << e.what() << std::endl;
+		}
+		break;
 	case 0:
+		//std::cout << "session id is: " << session_id << "\n";
 		func = PyObject_GetAttrString(load_module, (char*)"send_msg");
 		// Python calls break when using umlauts. Prolly need to cast message to UTF-8 first, but I'm not sure. May be a pure Win10 Problem.
 		args = PyTuple_Pack(2, PyUnicode_FromString((char*)session_id.c_str()), PyUnicode_FromString((char*)message.c_str()));
@@ -68,12 +92,25 @@ std::string GMF_0::py_process(std::string message, int mode, int additional_arg)
 		args = PyTuple_Pack(2, PyUnicode_FromString((char*)session_id.c_str()), PyUnicode_FromString((char*)str_tmp.c_str()));
 		callfunc = PyObject_CallObject(func, args);
 		// extract run id
-		str_tmp = _PyUnicode_AsString(callfunc);
-		if (str_tmp.find("\"id\": \"", int_tmp) != std::string::npos) {
-			int_tmp = str_tmp.find("\"id\": \"", int_tmp) + 7;
-			str_tmp = str_tmp.substr(int_tmp, str_tmp.find("\",", int_tmp) - int_tmp);
+		try
+		{
+			if (!callfunc)
+			{
+				if (PyErr_Occurred()) {
+					PyErr_Print();  // Print the Python error to stderr
+				}
+				throw std::runtime_error("Python function call failed.");
+			}
+
+			str_tmp = _PyUnicode_AsString(callfunc);
+			if (str_tmp == "") throw std::runtime_error("Failed to convert PyObject to string.");
 		}
-		else
+		catch (const std::exception& e)
+		{
+			std::cerr << "Exception caught: " << e.what() << std::endl;
+		}
+		//std::cout << "the new runs id is: " << str_tmp << "\n";
+		if (str_tmp.find("run_") == std::string::npos)
 		{
 			return "#!#!#! process error: run not initiated correctly";
 		}
@@ -85,15 +122,12 @@ std::string GMF_0::py_process(std::string message, int mode, int additional_arg)
 			args = PyTuple_Pack(2, PyUnicode_FromString((char*)session_id.c_str()), PyUnicode_FromString((char*)str_tmp.c_str()));
 			callfunc = PyObject_CallObject(func, args);
 			return_str = _PyUnicode_AsString(callfunc);
-			if (return_str.find("\"id\": \"", int_tmp) != std::string::npos) {
-				int_tmp = return_str.find("\"status\": \"", int_tmp) + 11;
-				return_str = return_str.substr(int_tmp, return_str.find("\",", int_tmp) - int_tmp);
-			}
-			else
+			//std::cout << "i";
+			if (return_str == "")
 			{
 				return "#!#!#! process error: could not retrieve run object";
 			}
-
+			
 			// assess run status
 			if (return_str == "completed")
 			{
@@ -114,69 +148,140 @@ std::string GMF_0::py_process(std::string message, int mode, int additional_arg)
 		}
 		
 		// retrieve response message
-		return_str = py_process("", 2, 1);
+		return_str = py_process("", 2, 2); // temporarily retrieves 2 messages, for self-retrieval fix
+		//std::cout << "message fetched: " << return_str << "\n";
 		if (return_str.find("#!#!#! message_list t") != std::string::npos)
 		{
-			int_tmp = return_str.find(":{");
-			return_str = "#!#!#! process answer: " + return_str.substr(int_tmp);
+			int_tmp = return_str.find("#:{", 50) + 2;
+			if (new_milestone) {
+				return_str = "#!#!#! process answer x: " + return_str.substr(int_tmp);
+			}
+			else {
+				return_str = "#!#!#! process answer: " + return_str.substr(int_tmp);
+			}
 		}
+		else
+		{
+			return_str = "#!#!#! process error, received the following unexpected output: " + return_str;
+		}
+		//std::cout << "sending back: " + return_str << "\n";
 		break;
 	case 1:
 		// new thread
-		std::cout << "py_process case 1 check\n";
+		//std::cout << "py_process case 1 check\n";
 		func = PyObject_GetAttrString(load_module, (char*)"create_thread");
 		callfunc = PyObject_CallObject(func, NULL);
-		return_str = _PyUnicode_AsString(callfunc);
-		std::cout << "python returns: " << return_str << "\n";
+		try
+		{
+			if (!callfunc)
+			{
+				if (PyErr_Occurred()) {
+					PyErr_Print();  // Print the Python error to stderr
+				}
+				throw std::runtime_error("Python function call failed.");
+			}
+
+			return_str = _PyUnicode_AsString(callfunc);
+			if (return_str == "") throw std::runtime_error("Failed to convert PyObject to string.");
+		}
+		catch (const std::exception& e)
+		{
+			std::cerr << "Exception caught: " << e.what() << std::endl;
+		}
+		//std::cout << "python returns: " << return_str << "\n";
 		// cut out thread id
 		if (return_str.find("thread_") != std::string::npos) 
 		{
-			std::cout << "thread created check\n";
+			//std::cout << "thread created check\n";
+			session_id = return_str;
 			return_str = "id: " + return_str;
 		}
 		else
 		{
-			std::cout << "thread not created check\n";
+			//std::cout << "thread not created check\n";
 			return_str = "error: failed to create chat_thread_id";
 		}
 		break;
 	case 2:
 		// get all msgs
+		//std::cout << "fetching messages with arg = " << std::to_string(int_tmp) << "\n";
 		func = PyObject_GetAttrString(load_module, (char*)"get_msg_list");
 		// Python calls break when using umlauts. Prolly need to cast message to UTF-8 first, but I'm not sure. May be a pure Win10 Problem.
 		args = PyTuple_Pack(2, PyUnicode_FromString((char*)session_id.c_str()), PyUnicode_FromString((char*)std::to_string(int_tmp).c_str()));
 		callfunc = PyObject_CallObject(func, args);
-		str_tmp = _PyUnicode_AsString(callfunc);
-		for (int i= int_tmp; i>0; i--) // messages get delivered in reverse order, so we account for that
+		try
 		{
+			if (!callfunc)
+			{
+				if (PyErr_Occurred()) {
+					PyErr_Print();  // Print the Python error to stderr
+				}
+				throw std::runtime_error("Python function call failed.");
+			}
+			if (!PyUnicode_Check(callfunc)) {
+				throw std::runtime_error("Expected a Python list, got something else.");
+			}
+
+			str_tmp = _PyUnicode_AsString(callfunc);
+			auto messages = json::parse(str_tmp);
+			int_tmp = 0;
+
 			// Combine all messages into one string in the following format (example for 7 chat messages and tmp_int 100, which is the max value):
-			// "#!#!#! message_list total(7):  #!#!#94:{message 1}:{user}:{id_1} #!#!#95:{message 2}:{assistant}:{id_2} ..... #!#!#100:{message 7}:{user}:{id_7}"
-			if (i = int_tmp)
+			// "#!#!#! message_list total(7):  #:{id_1}:{message 1}:{user} #:{id_2}:{message 2}:{assistant} ..... #:{id_7}:{message 7}:{user}"
+			for (auto& msg : messages)
 			{
-				int_tmp = 0;
-			}
-			if (str_tmp.find("\"id\": \"") != std::string::npos) // make sure there are still unprocessed messages
-			{
-				int_tmp = str_tmp.find("\"id\": \"", int_tmp) + 7;
-				return_str = ":{" + str_tmp.substr(int_tmp, str_tmp.find("\",", int_tmp) - int_tmp) + "}" + return_str;
-				int_tmp = str_tmp.find("\"role\": \"", int_tmp) + 9;
-				return_str = ":{" + str_tmp.substr(int_tmp, str_tmp.find("\",", int_tmp) - int_tmp) + "}" + return_str;
-				int_tmp = str_tmp.find("\"text\": {", int_tmp);
-				int_tmp = str_tmp.find("\"value\"", int_tmp) + 10;
-				return_str = " #!#!#" + std::to_string(i) + ":{" + str_tmp.substr(int_tmp, str_tmp.find("\",\n", int_tmp) - int_tmp) + "}" + return_str;
-			}
-			else // if no messages are left, construct a "header" for return_str and leave loop
-			{
-				if (int_tmp == 0)
-				{
-					return_str = "#!#!#! message_list error: no messages found";
+				if (((std::string)msg["value"]).find("Next section") != std::string::npos) {
+					new_milestone = true;
 				}
-				else
-				{
-					return_str = "#!#!#! message_list total(" + std::to_string(int_tmp - i) + "):" + return_str;
-				}
-				break;
+				int f = ((std::string)msg["value"]).find("$$:") + 3;
+				return_str = " #:{" + (std::string)msg["id"] + "}:{" + ((std::string)msg["value"]).substr(f) + "}:{" + (std::string)msg["role"] + "}" + return_str;
+				int_tmp++;
 			}
+			return_str = "#!#!#! message_list total(" + std::to_string(int_tmp) + "):" + return_str;
+		}
+		catch (const std::exception& e)
+		{
+			std::cerr << "Exception caught: " << e.what() << std::endl;
+		}
+
+		//std::cout << "py output for messages: " << str_tmp << "\n";
+		if (return_str == "")
+		{
+			return_str = "error: no messages found";
+		}
+		break;
+	case 3:
+		// set thread
+		func = PyObject_GetAttrString(load_module, (char*)"retrieve_thread");
+		args = PyTuple_Pack(1, PyUnicode_FromString((char*)message.c_str()));
+		callfunc = PyObject_CallObject(func, args);
+		try
+		{
+			if (!callfunc)
+			{
+				if (PyErr_Occurred()) {
+					PyErr_Print();  // Print the Python error to stderr
+				}
+				throw std::runtime_error("Python function call failed.");
+			}
+
+			str_tmp = _PyUnicode_AsString(callfunc);
+			if (str_tmp == "") throw std::runtime_error("Failed to convert PyObject to string.");
+		}
+		catch (const std::exception& e)
+		{
+			std::cerr << "Exception caught: " << e.what() << std::endl;
+		}
+		// check return value
+		//std::cout << "python return val: " << str_tmp << "\n";
+		if (str_tmp.find("thread_") != std::string::npos)
+		{
+			session_id = str_tmp;
+			return_str = "id: " + str_tmp;
+		}
+		else
+		{
+			return_str = "error: failed to load thread " + str_tmp;
 		}
 		break;
 	}
@@ -186,23 +291,30 @@ std::string GMF_0::py_process(std::string message, int mode, int additional_arg)
 
 std::string GMF_0::process_commmand(std::string cmd_str)
 {
-	if (cmd_str == "#!#!#! get_thread")
+	if (cmd_str.find("#!#!#! get_thread") != std::string::npos)
 	{
-		std::cout << "process_command check\n";
+		//std::cout << "process_command get_thread check\n";
 		if (session_id != "")
 		{
-			std::cout << "id exists check\n";
+			//std::cout << "id exists check\n";
 			return "#!#!#! thread_id id: " + session_id;
 		}
-		else 
+		else
 		{
-			std::cout << "id empty check\n";
+			//std::cout << "id empty check\n";
 			return "#!#!#! thread_id " + py_process("", 1);
-		}
+		}	
+	}
+	else if (cmd_str.find("#!#!#! set_thread") != std::string::npos)
+	{
+		cmd_str = cmd_str.substr(18);
+		//std::cout << "process_command set_thread " << cmd_str << "\n";
+		return "#!#!#! thread_id " + py_process(cmd_str, 3);
 	}
 	else if (cmd_str.find("#!#!#! get_msg_list") != std::string::npos) // does not return invis messages
 	{
-		return py_process("", 2, 100);
+		int arg = std::stoi(cmd_str.substr(20));
+		return py_process("", 2, arg);
 	}
 
 	return "#!#!#! invalid command";

@@ -11,7 +11,7 @@ void GMF_1::process()
 	std::string* temp;
 	while (1) {
 		while (!in_buffer.empty()) {
-			std::cout << "process passing GMF_1\n";
+			//std::cout << "process passing GMF_1\n";
 			in_buffer.pop(temp);
 			out_buffer->push(temp);
 		}

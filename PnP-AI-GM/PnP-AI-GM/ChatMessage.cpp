@@ -1,10 +1,10 @@
 #include "ChatMessage.h"
 
-ChatMessage::ChatMessage(std::string newMessage, std::string newUser, std::string newID)
+ChatMessage::ChatMessage(std::string newID, std::string newMessage, std::string newUser)
 {
+	id = newID;
 	message = newMessage;
 	user = newUser;
-	id = newID;
 }
 
 std::string ChatMessage::getMessage()

@@ -22,5 +22,6 @@ private:
     std::string process_commmand(std::string);
     std::string session_id;
     std::vector<std::string> hidden_messages;
+    bool new_milestone = false;
 };
 #endif

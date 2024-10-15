@@ -45,10 +45,10 @@ void GM_control::updateChatHistory(std::string messages)
 	int int_tmp = 0;
 	int c = std::stoi(messages.substr(0, messages.find("):")));
 
-	// "7):  #!#!#94:{message 1}:{user}:{id_1} #!#!#95:{message 2}:{assistant}:{id_2} ..... #!#!#100:{message 7}:{user}:{id_7}"
+	// "7):  #:{id_1}:{message 1}:{user} #:{id_2}:{message 2}:{assistant} ..... #:{id_7}:{message 7}:{user}"
 	for (int i = 0; i < c; i++)
 	{
-		int_tmp = messages.find(":{") + 2;
+		int_tmp = messages.find("{") + 1;
 		p1 = messages.substr(int_tmp, messages.find("}:{", int_tmp) - int_tmp);
 		int_tmp = messages.find("}:{", int_tmp) + 3;
 		p2 = messages.substr(int_tmp, messages.find("}:{", int_tmp) - int_tmp);
@@ -63,17 +63,17 @@ void GM_control::updateChatHistory(std::string messages)
 
 std::string GM_control::addToChatHistory(std::string newMessage)
 {
-	// :{message 1}:{user}:{id_1}
+	// :{id_1}:{message 1}:{user}
 	std::string p1, p2, p3;
 	int i = newMessage.find("}:{");
-	p1 = newMessage.substr(2, i - 2);
+	p1 = newMessage.substr(3, i - 2);
 	i += 3;
 	p2 = newMessage.substr(i, newMessage.find("}:{", i) - i);
 	i = newMessage.find("}:{", i) + 3;
 	p3 = newMessage.substr(i, newMessage.find("}") - i);
 	session->addToChatHistory(new ChatMessage(p1, p2, p3));
 	
-	return p1;
+	return p2;
 }
 
 GMF* GM_control::findFragmentById(std::string id)
