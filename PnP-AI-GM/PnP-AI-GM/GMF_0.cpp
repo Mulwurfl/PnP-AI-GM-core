@@ -28,18 +28,14 @@ void GMF_0::process()
 	while (1) {
 		while (!in_buffer.empty())
 		{
-			//std::cout << "process passing GMF_0\n";
 			in_buffer.pop(temp);
-			//std::cout << "message reads: " << *temp << "\n";
 			if (temp->find("#!#!#!") != std::string::npos)
 			{
-				//std::cout << "command detected\n";
-				*temp = process_commmand(*temp);
+				*temp = process_command(*temp);
 			}
 			else 
 			{
-				//std::cout << "no command detected\n";
-				*temp = py_process(*temp, 0, 1);
+				*temp = py_process(*temp, 0, 0);
 			}
 			out_buffer->push(temp);
 		}
@@ -81,6 +77,7 @@ std::string GMF_0::py_process(std::string message, int mode, int additional_arg)
 		}
 		break;
 	case 0:
+		// post message
 		//std::cout << "session id is: " << session_id << "\n";
 		func = PyObject_GetAttrString(load_module, (char*)"send_msg");
 		// Python calls break when using umlauts. Prolly need to cast message to UTF-8 first, but I'm not sure. May be a pure Win10 Problem.
@@ -284,14 +281,137 @@ std::string GMF_0::py_process(std::string message, int mode, int additional_arg)
 			return_str = "error: failed to load thread " + str_tmp;
 		}
 		break;
+	case 4:
+		// file search (message + run)
+		std::string fs_id = getFileIDByInt(additional_arg); //returns file id of the section document
+		func = PyObject_GetAttrString(load_module, (char*)"send_msg_fs");
+		// Python calls break when using umlauts. Prolly need to cast message to UTF-8 first, but I'm not sure. May be a pure Win10 Problem.
+		args = PyTuple_Pack(3, PyUnicode_FromString((char*)session_id.c_str()), PyUnicode_FromString((char*)message.c_str()), PyUnicode_FromString((char*)fs_id.c_str()));
+		callfunc = PyObject_CallObject(func, args);
+
+		// create run 
+		func = PyObject_GetAttrString(load_module, (char*)"run_with_fs");
+		args = PyTuple_Pack(2, PyUnicode_FromString((char*)session_id.c_str()), PyUnicode_FromString((char*)str_tmp.c_str()));
+		callfunc = PyObject_CallObject(func, args);
+		// extract run id
+		try
+		{
+			if (!callfunc)
+			{
+				if (PyErr_Occurred()) {
+					PyErr_Print();  // Print the Python error to stderr
+				}
+				throw std::runtime_error("Python function call failed.");
+			}
+
+			str_tmp = _PyUnicode_AsString(callfunc);
+			if (str_tmp == "") throw std::runtime_error("Failed to convert PyObject to string.");
+		}
+		catch (const std::exception& e)
+		{
+			std::cerr << "Exception caught: " << e.what() << std::endl;
+		}
+		//std::cout << "the new runs id is: " << str_tmp << "\n";
+		if (str_tmp.find("run_") == std::string::npos)
+		{
+			return "#!#!#! process error: run not initiated correctly";
+		}
+
+		// fish for run update
+		while (true)
+		{
+			func = PyObject_GetAttrString(load_module, (char*)"get_run");
+			args = PyTuple_Pack(2, PyUnicode_FromString((char*)session_id.c_str()), PyUnicode_FromString((char*)str_tmp.c_str()));
+			callfunc = PyObject_CallObject(func, args);
+			return_str = _PyUnicode_AsString(callfunc);
+			//std::cout << "i";
+			if (return_str == "")
+			{
+				return "#!#!#! process error: could not retrieve run object";
+			}
+
+			// assess run status
+			if (return_str == "completed")
+			{
+				break;
+			}
+			else if (return_str == "expired")
+			{
+				return "#!#!#! process error: run expired";
+			}
+			else if (return_str == "failed")
+			{
+				return "#!#!#! process error: run failed";
+			}
+			else if (return_str == "incomplete")
+			{
+				return "#!#!#! process error: run incomplete due to token limits";
+			}
+		}
+
+		// retrieve response message
+		return_str = py_process("", 2, 2); // temporarily retrieves 2 messages, for self-retrieval fix
+		//std::cout << "message fetched: " << return_str << "\n";
+		if (return_str.find("#!#!#! message_list t") != std::string::npos)
+		{
+			int_tmp = return_str.find("#:{", 50) + 2;
+			if (new_milestone) {
+				return_str = "#!#!#! process answer x: " + return_str.substr(int_tmp);
+			}
+			else {
+				return_str = "#!#!#! process answer: " + return_str.substr(int_tmp);
+			}
+		}
+		else
+		{
+			return_str = "#!#!#! process error, received the following unexpected output: " + return_str;
+		}
+		//std::cout << "sending back: " + return_str << "\n";
+		break;
 	}
 
 	return return_str;
 }
 
-std::string GMF_0::process_commmand(std::string cmd_str)
+std::string GMF_0::getFileIDByInt(int secnum)
 {
-	if (cmd_str.find("#!#!#! get_thread") != std::string::npos)
+	// range 0-99 for sections, range -1 to -99 for everything else
+	switch (secnum)
+	{
+	case 0:
+		return "file-0oKhqzr7VrrKb0IWdZzUsk6x";
+	case 1:
+		return "file-8iTgdO1ZnGpgWzEdIceTzxaj";
+	case 2:
+		return "file-oU3zPTaOybxPlR1EJUQZEUFS";
+	case 3:
+		return "file-HHhnbyQ8nuBWdLqGYSFi4G5r";
+	case 4:
+		return "file-2ZXS3P7ELULTLd19PjTUrshR";
+	case 5:
+		return "file-3IcDBtAKLMme4QMLwq4wR0Cw";
+	}
+
+	return "Invalid_section_number_error";
+}
+
+std::string GMF_0::process_command(std::string cmd_str)
+{
+	if (cmd_str.find("#!#!#! run_fs") != std::string::npos) // "#!#!#! run_fs secnum text"
+	{
+		int arg = std::stoi(cmd_str.substr(14));
+		int c = 2; //counting digits to determine string cutoff
+		if ((arg < 0 && arg > -10) || arg > 9)
+		{
+			c = 3;
+		}
+		else if (c <= -10)
+		{
+			c = 4;
+		}
+		return py_process(cmd_str.substr(14 + c), 4, arg);
+	}
+	else if (cmd_str.find("#!#!#! get_thread") != std::string::npos)
 	{
 		//std::cout << "process_command get_thread check\n";
 		if (session_id != "")

@@ -18,8 +18,9 @@ private:
     PyObject* func;
     PyObject* callfunc;
     PyObject* args;
+    std::string getFileIDByInt(int);
     std::string py_process(std::string, int, int = 0);
-    std::string process_commmand(std::string);
+    std::string process_command(std::string);
     std::string session_id;
     std::vector<std::string> hidden_messages;
     bool new_milestone = false;

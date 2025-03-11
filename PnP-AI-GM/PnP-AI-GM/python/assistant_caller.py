@@ -17,7 +17,39 @@ def send_msg(x,y):
     thread_message = client.beta.threads.messages.create(
         thread_id=x,
         role="user",
+        content=y
+    )
+    return 1
+
+def send_msg_as_gm(x,y,a): # a is the name of the file to use in append_file(), leave null to skip append
+    if a != None:
+        x = append_file(x,a)
+
+    thread_message = client.beta.threads.messages.create(
+        thread_id=xx,
+        role="assistant",
+        content=y
+    )
+    return 1
+
+def append_file(text, filename):
+    c = text.find("$$:")
+    if c == -1:
+        raise Exception("Textual separator missing in message.")
+    file = open(filename)
+    text = text[:c] + "Information from file \" " + filename[:-4] + "\":\n" + file.read() + "\n" + text[c:]
+    file.close()
+    return text
+
+def send_msg_fs(x,y,z):
+    thread_message = client.beta.threads.messages.create(
+        thread_id=x,
+        role="user",
         content=y,
+        attachments=[{
+            "file_id": z,
+            "tools": [{"type": "file_search"}]
+            }]
     )
     return 1
 

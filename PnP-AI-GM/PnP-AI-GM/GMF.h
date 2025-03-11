@@ -22,7 +22,5 @@ protected:
 	std::string id;
 	boost::lockfree::queue<std::string*> in_buffer{ 100 };
 	boost::lockfree::queue<std::string*>* out_buffer;
-	std::string in_id;
-	std::string out_id;
 };
 #endif

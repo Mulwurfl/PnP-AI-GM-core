@@ -1,0 +1,47 @@
+Character Name: Vander  
+Race: Human (Standard)  
+Class: Fighter (Level 1)  
+Background: Outlander  
+Experience Points: 0  
+
+--- Ability Scores (Standard Array) ---  
+Strength: 16 (+3)  
+Dexterity: 14 (+2)  
+Constitution: 14 (+2)  
+Intelligence: 10 (+0)  
+Wisdom: 12 (+1)  
+Charisma: 8 (-1)  
+
+--- Proficiencies ---  
+Armor: All armor, shields  
+Weapons: Simple weapons, martial weapons  
+Saving Throws: Strength, Constitution  
+Skills: Athletics (+5), Perception (+3), Survival (+3), Intimidation (+1)  
+Tools: One type of musical instrument (Choose: drum, flute, etc.)  
+
+--- Combat Stats ---  
+Hit Points: 12 (1d10 + 2)  
+Armor Class: 16 (Chain Mail)  
+Speed: 30 ft  
+Initiative: +2  
+Passive Perception: 13  
+
+--- Equipment ---  
+- Chain Mail  
+- Longsword (1d8 slashing, versatile 1d10)  
+- Shield (+2 AC)  
+- Light Crossbow (1d8 piercing, range 80/320)  
+- 20 bolts  
+- Explorer’s Pack (backpack, bedroll, mess kit, tinderbox, torches, rations, waterskin, rope)  
+- Staff, hunting trap, trophy from a fallen foe  
+- Traveler’s clothes, pouch (10 GP)  
+
+--- Features & Traits ---  
+**Fighting Style (Defense):** +1 bonus to AC while wearing armor  
+**Second Wind:** Once per short rest, regain 1d10 + 1 HP as a bonus action   
+
+--- Languages ---  
+Common, Dwarvish 
+
+--- Notes ---  
+Vander is built as a rugged and self-sufficient warrior, skilled in survival and navigation. His **Outlander** background gives him a nomadic, battle-hardened edge, making him a great fit for a classic adventurer.  
